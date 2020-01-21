@@ -60,23 +60,23 @@ SAI:
 #################################
 ##   O vetor já foi gerado     ##
 ##     e guardado na memoria   ##
-##       ##
+##             ##
 ##    Agora irá começar        ##
 ##    o desenho do poligono    ##
 #################################
 
-addi t0, t0, 1			#flag do bubblesort
-addi t1, t1, 1			#variavel de controle do for i
-addi t5, s0, -1			#variavel auxiliar do for
+addi t0, t0, 1 #flag do bubblesort
+addi t1, zero, 0        #variavel de controle do for i
+addi t5, s0, 0 #variavel auxiliar do for
 WHILE: beq t0, zero, FIM_WHILE
 addi t0, t0, -1
-FOR:   ble t1, t5, FIM_FOR
+FOR:   ble t5, t1, FIM_FOR
 
-mv t2, s1			# Neste ponto é calculado os indices do vetor
-addi t6, zero, -4		# 
-mul t6, t6, t1			#
-add t2, t2, t6			# aqui e colocado o indice da primeira posição
-addi t3, t3, -4			# Aqui é colococado o indice da segunda posição
+mv t2, s1 # Neste ponto é calculado os indices do vetor
+addi t6, zero, -4 #
+mul t6, t6, t1 #
+add t2, t2, t6 # aqui e colocado o indice da primeira posição
+addi t3, t2, -4 # Aqui é colococado o indice da segunda posição
 
 lw s10, 0(t2)
 lw s11, 0(t3)
@@ -102,8 +102,8 @@ mv s11, t4
 slli s10, s10, 16
 slli s11, s11, 16
 
-or s10, s10, s8
-or s11, s11, s9
+or s10, s10, s9
+or s11, s11, s8
 
 sw s10, 0(t2)
 sw s11, 0(t3)
@@ -111,13 +111,40 @@ FIM_IF:
 addi t1, t1, 1
 j FOR
 FIM_FOR:
+addi t1, zero, 0
 j WHILE
 FIM_WHILE:
 
 
+#################################
+##   Neste Ponto o vetor está  ##
+##   ordenado e a primeira     ##
+##    e a ultima posicao       ##
+##    são os pontos Xmin e Xmax##
+##    Agora a reta meio será   ##
+##          desenhada       ##
+#################################
+
+addi t0, zero, 4
+mul t0, t0, s0
+
+mv t4, s1
+
+lw t1, 0(s1)
+add t4, t4, t0
+lw t2, 0(t4)
+
+srli t4, t1, 16
+srli t5, t2, 16
+
+sub t1, t5, t4 # t1 = x - x0
+
+andi t4, t1, 0x0F
+andi t5, t2, 0x0F
+
+sub t2, t5, t4 #t2 = y - y0
 
 
-#add sp, sp, t0
-
-
-#ret
+fcvt.s.w ft0, t1
+fcvt.s.w ft1, t2
+fdiv.s   ft2, ft1, ft0 #ft2 = coeficiente angular da reta
